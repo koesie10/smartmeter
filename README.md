@@ -2,6 +2,10 @@
 
 Connects to P1 DSMR interface.
 
+Influenced by [smeterd](https://github.com/nrocco/smeterd).
+
+Licensed under MIT license.
+
 ## Development
 
 * [dep](https://github.com/golang/dep)
