@@ -43,15 +43,13 @@ var influxCmd = &cobra.Command{
 			tags[parts[0]] = parts[1]
 		}
 
-		var c client.Client
+		c, err := client.NewHTTPClient(influxOptions)
+		if err != nil {
+			return fmt.Errorf("failed to connect to InfluxDB: %v", err)
+		}
+		defer c.Close()
 
 		if !additionalInfluxOptions.DisableUpload {
-			c, err := client.NewHTTPClient(influxOptions)
-			if err != nil {
-				return fmt.Errorf("failed to connect to InfluxDB: %v", err)
-			}
-			defer c.Close()
-
 			if _, _, err := c.Ping(5 * time.Second); err != nil {
 				return fmt.Errorf("failed to ping InfluxDB: %v", err)
 			}
