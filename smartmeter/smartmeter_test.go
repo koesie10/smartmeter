@@ -1,7 +1,7 @@
 package smartmeter_test
 
 import (
-			"os"
+	"os"
 	"path/filepath"
 	"testing"
 

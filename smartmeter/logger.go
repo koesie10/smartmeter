@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
-		"time"
+	"time"
 )
 
 type Logger interface {

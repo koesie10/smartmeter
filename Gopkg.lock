@@ -10,6 +10,18 @@
   version = "v1.0"
 
 [[projects]]
+  digest = "1:18f8bac7ae238f1d06b347d40fea2a37d029e11ddeac57163182a08c780955f2"
+  name = "github.com/influxdata/influxdb"
+  packages = [
+    "client/v2",
+    "models",
+    "pkg/escape",
+  ]
+  pruneopts = "UT"
+  revision = "5766854b95ae86cccf6cc8ffe4c5bb9eacc994b8"
+  version = "v1.6.1"
+
+[[projects]]
   branch = "master"
   digest = "1:62737c77426b1784408f1908fb6aab50bdb1732396489a79b03c655643b0f4b2"
   name = "github.com/jacobsa/go-serial"
@@ -45,6 +57,7 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/influxdata/influxdb/client/v2",
     "github.com/jacobsa/go-serial/serial",
     "github.com/spf13/cobra",
   ]

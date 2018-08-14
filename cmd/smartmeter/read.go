@@ -20,6 +20,7 @@ var readCmd = &cobra.Command{
 		if err != nil {
 			return fmt.Errorf("failed to open serial port %s: %v", serialOptions.PortName, err)
 		}
+		defer port.Close()
 
 		sm, err := smartmeter.New(port)
 		if err != nil {
