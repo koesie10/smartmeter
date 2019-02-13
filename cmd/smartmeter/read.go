@@ -43,8 +43,8 @@ var readCmd = &cobra.Command{
 		}
 
 		tw := tabwriter.NewWriter(os.Stdout, 10, 0, 2, ' ', tabwriter.AlignRight)
-		fmt.Println(tw, "Time\tTotal kWh Tariff 1 Consumed\tTotal kWh Tariff 2 consumed\tTotal gas consumed\tCurrent kWh tariff\tGas Measured At")
-		fmt.Fprintf(tw, "%s\t%.3f\t%.3f\t%.3f\t%d\t%s", time.Now(), packet.Electricity.Tariff1.Consumed, packet.Electricity.Tariff2.Consumed, packet.Gas.Consumed, packet.Gas.MeasuredAt)
+		fmt.Fprintln(tw, "Time\tTotal kWh Tariff 1 Consumed\tTotal kWh Tariff 2 consumed\tTotal gas consumed m^3\tCurrent consumption kW\tGas Measured At")
+		fmt.Fprintf(tw, "%s\t%.3f\t%.3f\t%.3f\t%.3f\t%s", time.Now(), packet.Electricity.Tariff1.Consumed, packet.Electricity.Tariff2.Consumed, packet.Gas.Consumed, packet.Electricity.CurrentConsumed - packet.Electricity.CurrentProduced, packet.Gas.MeasuredAt)
 		return tw.Flush()
 	},
 }

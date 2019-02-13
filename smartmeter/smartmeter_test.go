@@ -16,6 +16,10 @@ func TestDSMR40(t *testing.T) {
 	testFile(t, "dsmr40.txt")
 }
 
+func TestESMR50(t *testing.T) {
+	testFile(t, "esmr50.txt")
+}
+
 func testFile(t *testing.T, file string) {
 	f, err := os.Open(filepath.Join("test", file))
 	if err != nil {
