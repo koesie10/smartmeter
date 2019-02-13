@@ -25,6 +25,30 @@ func NewElectricityPoint(t time.Time, p *smartmeter.P1Packet, measurement string
 	fields["current_consumed"] = p.Electricity.CurrentConsumed
 	fields["current_produced"] = p.Electricity.CurrentProduced
 
+	fields["number_of_power_failures"] = p.Electricity.NumberOfPowerFailures
+	fields["number_of_long_power_failures"] = p.Electricity.NumberOfLongPowerFailures
+
+	return client.NewPoint(measurement, tags, fields, t)
+}
+
+func NewPhasePoint(t time.Time, p *smartmeter.P1Packet, phase int, measurement string, tags map[string]string) (*client.Point, error) {
+	tags = copyTags(tags)
+	tags["equipment_id"] = p.Electricity.EquipmentID
+	tags["tariff"] = strconv.Itoa(p.Electricity.Tariff)
+	tags["switch_position"] = strconv.Itoa(p.Electricity.SwitchPosition)
+	tags["phase"] = strconv.Itoa(phase)
+
+	pp := p.Electricity.Phases[phase]
+
+	fields := make(map[string]interface{})
+	fields["number_of_voltage_sags"] = pp.NumberOfVoltageSags
+	fields["number_of_voltage_swells"] = pp.NumberOfVoltageSwells
+
+	fields["instantaneous_voltage"] = pp.InstantaneousVoltage
+	fields["instantaneous_current"] = pp.InstantaneousCurrent
+	fields["instantaneous_active_positive_power"] = pp.InstantaneousActivePositivePower
+	fields["instantaneous_active_negative_power"] = pp.InstantaneousActiveNegativePower
+
 	return client.NewPoint(measurement, tags, fields, t)
 }
 

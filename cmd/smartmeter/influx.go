@@ -21,6 +21,7 @@ var additionalInfluxOptions = struct {
 	RetentionPolicy string
 
 	ElectricityMeasurement string
+	PhaseMeasurement       string
 	GasMeasurement         string
 
 	Tags []string
@@ -87,6 +88,16 @@ var influxCmd = &cobra.Command{
 				continue
 			}
 
+			pps := make([]*client.Point, 0, len(packet.Electricity.Phases))
+			for i := range packet.Electricity.Phases {
+				pp, err := influx.NewPhasePoint(time.Now(), packet, i, additionalInfluxOptions.PhaseMeasurement, tags)
+				if err != nil {
+					log.Println(err)
+				}
+
+				pps = append(pps, pp)
+			}
+
 			gp, err := influx.NewGasPoint(packet, additionalInfluxOptions.GasMeasurement, tags)
 			if err != nil {
 				log.Println(err)
@@ -103,6 +114,7 @@ var influxCmd = &cobra.Command{
 			}
 
 			bp.AddPoint(ep)
+			bp.AddPoints(pps)
 			bp.AddPoint(gp)
 
 			if additionalInfluxOptions.DisableUpload {
@@ -131,6 +143,7 @@ func init() {
 	influxCmd.Flags().StringVar(&additionalInfluxOptions.Database, "influx-database", "smartmeter", "InfluxDB database")
 	influxCmd.Flags().StringVar(&additionalInfluxOptions.RetentionPolicy, "influx-retention-policy", "", "InfluxDB retention policy. Leave empty for default.")
 	influxCmd.Flags().StringVar(&additionalInfluxOptions.ElectricityMeasurement, "influx-electricity-measurement", "smartmeter_electricity", "InfluxDB measurement for electricity")
+	influxCmd.Flags().StringVar(&additionalInfluxOptions.PhaseMeasurement, "influx-phase-measurement", "smartmeter_phase", "InfluxDB measurement for phase")
 	influxCmd.Flags().StringVar(&additionalInfluxOptions.GasMeasurement, "influx-gas-measurement", "smartmeter_gas", "InfluxDB measurement for gas")
 
 	influxCmd.Flags().StringSliceVar(&additionalInfluxOptions.Tags, "influx-tags", []string{}, "InfluxDB tags in key=value format")
