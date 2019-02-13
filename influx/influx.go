@@ -36,7 +36,9 @@ func NewPhasePoint(t time.Time, p *smartmeter.P1Packet, phase int, measurement s
 	tags["equipment_id"] = p.Electricity.EquipmentID
 	tags["tariff"] = strconv.Itoa(p.Electricity.Tariff)
 	tags["switch_position"] = strconv.Itoa(p.Electricity.SwitchPosition)
-	tags["phase"] = strconv.Itoa(phase)
+	// Our phases are 0-indexed in the slice, while they are named in a 1-index fashion.
+	// We will use the 1-indexed tags
+	tags["phase"] = strconv.Itoa(phase+1)
 
 	pp := p.Electricity.Phases[phase]
 
