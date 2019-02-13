@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/influxdata/influxdb/client/v2"
-	"github.com/jacobsa/go-serial/serial"
 	"github.com/koesie10/smartmeter/influx"
 	"github.com/koesie10/smartmeter/smartmeter"
 	"github.com/spf13/cobra"
@@ -56,9 +55,9 @@ var influxCmd = &cobra.Command{
 			}
 		}
 
-		port, err := serial.Open(serialOptions)
+		port, err := OpenPort()
 		if err != nil {
-			return fmt.Errorf("failed to open serial port %s: %v", serialOptions.PortName, err)
+			return fmt.Errorf("failed to open port: %v", err)
 		}
 		defer port.Close()
 

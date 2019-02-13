@@ -7,7 +7,6 @@ import (
 	"text/tabwriter"
 	"time"
 
-	"github.com/jacobsa/go-serial/serial"
 	"github.com/koesie10/smartmeter/smartmeter"
 	"github.com/spf13/cobra"
 )
@@ -16,9 +15,9 @@ var readCmd = &cobra.Command{
 	Use:   "read",
 	Short: "read a single P1 packet to stdout",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		port, err := serial.Open(serialOptions)
+		port, err := OpenPort()
 		if err != nil {
-			return fmt.Errorf("failed to open serial port %s: %v", serialOptions.PortName, err)
+			return fmt.Errorf("failed to open port: %v", err)
 		}
 		defer port.Close()
 
@@ -44,7 +43,7 @@ var readCmd = &cobra.Command{
 
 		tw := tabwriter.NewWriter(os.Stdout, 10, 0, 2, ' ', tabwriter.AlignRight)
 		fmt.Fprintln(tw, "Time\tTotal kWh Tariff 1 Consumed\tTotal kWh Tariff 2 consumed\tTotal gas consumed m^3\tCurrent consumption kW\tGas Measured At")
-		fmt.Fprintf(tw, "%s\t%.3f\t%.3f\t%.3f\t%.3f\t%s", time.Now(), packet.Electricity.Tariff1.Consumed, packet.Electricity.Tariff2.Consumed, packet.Gas.Consumed, packet.Electricity.CurrentConsumed - packet.Electricity.CurrentProduced, packet.Gas.MeasuredAt)
+		fmt.Fprintf(tw, "%s\t%.3f\t%.3f\t%.3f\t%.3f\t%s", time.Now(), packet.Electricity.Tariffs[0].Consumed, packet.Electricity.Tariffs[1].Consumed, packet.Gas.Consumed, packet.Electricity.CurrentConsumed - packet.Electricity.CurrentProduced, packet.Gas.MeasuredAt)
 		return tw.Flush()
 	},
 }

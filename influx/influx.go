@@ -17,10 +17,10 @@ func NewElectricityPoint(t time.Time, p *smartmeter.P1Packet, measurement string
 	fields := make(map[string]interface{})
 	fields["threshold"] = p.Electricity.Threshold
 
-	fields["tariff1_consumed"] = p.Electricity.Tariff1.Consumed
-	fields["tariff1_produced"] = p.Electricity.Tariff1.Produced
-	fields["tariff2_consumed"] = p.Electricity.Tariff2.Consumed
-	fields["tariff2_produced"] = p.Electricity.Tariff2.Produced
+	fields["tariff1_consumed"] = p.Electricity.Tariffs[0].Consumed
+	fields["tariff1_produced"] = p.Electricity.Tariffs[0].Produced
+	fields["tariff2_consumed"] = p.Electricity.Tariffs[1].Consumed
+	fields["tariff2_produced"] = p.Electricity.Tariffs[1].Produced
 
 	fields["current_consumed"] = p.Electricity.CurrentConsumed
 	fields["current_produced"] = p.Electricity.CurrentProduced

@@ -65,6 +65,7 @@ func (sm *SmartMeter) parsePacket(datagram [][]byte) (*P1Packet, error) {
 	p := &P1Packet{
 		Timestamp: time.Now(),
 		Electricity: Electricity{
+			Tariffs: make([]Tariff, 2),
 			Phases: make([]Phase, 3),
 		},
 		Raw: datagram,
@@ -111,7 +112,7 @@ func (sm *SmartMeter) parsePacket(datagram [][]byte) (*P1Packet, error) {
 			if unit != "kWh" {
 				return nil, fmt.Errorf("invalid unit for electricity delivery: %v", unit)
 			}
-			p.Electricity.Tariff1.Consumed, err = strconv.ParseFloat(data, 64)
+			p.Electricity.Tariffs[0].Consumed, err = strconv.ParseFloat(data, 64)
 			if err != nil {
 				return nil, fmt.Errorf("failed to parse %v as electricity delivery: %v", data, err)
 			}
@@ -120,7 +121,7 @@ func (sm *SmartMeter) parsePacket(datagram [][]byte) (*P1Packet, error) {
 			if unit != "kWh" {
 				return nil, fmt.Errorf("invalid unit for electricity delivery: %v", unit)
 			}
-			p.Electricity.Tariff2.Consumed, err = strconv.ParseFloat(data, 64)
+			p.Electricity.Tariffs[1].Consumed, err = strconv.ParseFloat(data, 64)
 			if err != nil {
 				return nil, fmt.Errorf("failed to parse %v as electricity delivery: %v", data, err)
 			}
@@ -129,7 +130,7 @@ func (sm *SmartMeter) parsePacket(datagram [][]byte) (*P1Packet, error) {
 			if unit != "kWh" {
 				return nil, fmt.Errorf("invalid unit for electricity delivery: %v", unit)
 			}
-			p.Electricity.Tariff1.Produced, err = strconv.ParseFloat(data, 64)
+			p.Electricity.Tariffs[0].Produced, err = strconv.ParseFloat(data, 64)
 			if err != nil {
 				return nil, fmt.Errorf("failed to parse %v as electricity delivery: %v", data, err)
 			}
@@ -138,7 +139,7 @@ func (sm *SmartMeter) parsePacket(datagram [][]byte) (*P1Packet, error) {
 			if unit != "kWh" {
 				return nil, fmt.Errorf("invalid unit for electricity delivery: %v", unit)
 			}
-			p.Electricity.Tariff2.Produced, err = strconv.ParseFloat(data, 64)
+			p.Electricity.Tariffs[1].Produced, err = strconv.ParseFloat(data, 64)
 			if err != nil {
 				return nil, fmt.Errorf("failed to parse %v as electricity delivery: %v", data, err)
 			}

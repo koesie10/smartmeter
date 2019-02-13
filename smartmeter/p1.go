@@ -1,6 +1,8 @@
 package smartmeter
 
-import "time"
+import (
+	"time"
+)
 
 type P1Packet struct {
 	// DSMRVersion is the version information for P1 output (1-3:0.2.8)
@@ -26,10 +28,8 @@ type Electricity struct {
 	// ThresholdUnit is the unit of the Threshold, usually A or kW
 	ThresholdUnit string
 
-	// Tariff1 contains the client electricity delivery during the tariff 1
-	Tariff1 Tariff
-	// Tariff2 contains the client electricity delivery during the tariff 2
-	Tariff2 Tariff
+	// Tariffs contains the client electricity delivery during the tariff, currently exactly two tariff2s.
+	Tariffs []Tariff
 
 	// CurrentConsumed contains the actual electricity power delivered in kW (1-0:1.7.0)
 	CurrentConsumed float64
