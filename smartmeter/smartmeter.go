@@ -66,7 +66,7 @@ func (sm *SmartMeter) parsePacket(datagram [][]byte) (*P1Packet, error) {
 		Timestamp: time.Now(),
 		Electricity: Electricity{
 			Tariffs: make([]Tariff, 2),
-			Phases: make([]Phase, 3),
+			Phases:  make([]Phase, 3),
 		},
 		Raw: datagram,
 	}
@@ -87,25 +87,25 @@ func (sm *SmartMeter) parsePacket(datagram [][]byte) (*P1Packet, error) {
 		case "0-0:1.0.0":
 			p.Timestamp, err = time.ParseInLocation(dateFormat, data[:len(data)-1], time.Local)
 			if err != nil {
-				return nil, fmt.Errorf("failed to parse %v as timestamp: %v", data, err)
+				return nil, WrapError(err, "timestamp", data)
 			}
 		case "0-0:96.1.1":
 			p.Electricity.EquipmentID = data
 		case "0-0:96.14.0":
 			p.Electricity.Tariff, err = strconv.Atoi(data)
 			if err != nil {
-				return nil, fmt.Errorf("failed to parse %v as tarrif: %v", data, err)
+				return nil, WrapError(err, "tarrif", data)
 			}
 		case "0-0:96.3.10":
 			p.Electricity.SwitchPosition, err = strconv.Atoi(data)
 			if err != nil {
-				return nil, fmt.Errorf("failed to parse %v as switch position: %v", data, err)
+				return nil, WrapError(err, "switch position", data)
 			}
 		case "0-0:17.0.0":
 			data, p.Electricity.ThresholdUnit = sm.getValueAndUnit(data)
 			p.Electricity.Threshold, err = strconv.ParseFloat(data, 64)
 			if err != nil {
-				return nil, fmt.Errorf("failed to parse %v as threshold: %v", data, err)
+				return nil, WrapError(err, "threshold", data)
 			}
 		case "1-0:1.8.1":
 			data, unit := sm.getValueAndUnit(data)
@@ -114,7 +114,7 @@ func (sm *SmartMeter) parsePacket(datagram [][]byte) (*P1Packet, error) {
 			}
 			p.Electricity.Tariffs[0].Consumed, err = strconv.ParseFloat(data, 64)
 			if err != nil {
-				return nil, fmt.Errorf("failed to parse %v as electricity delivery: %v", data, err)
+				return nil, WrapError(err, "electricity delivery", data)
 			}
 		case "1-0:1.8.2":
 			data, unit := sm.getValueAndUnit(data)
@@ -123,7 +123,7 @@ func (sm *SmartMeter) parsePacket(datagram [][]byte) (*P1Packet, error) {
 			}
 			p.Electricity.Tariffs[1].Consumed, err = strconv.ParseFloat(data, 64)
 			if err != nil {
-				return nil, fmt.Errorf("failed to parse %v as electricity delivery: %v", data, err)
+				return nil, WrapError(err, "electricity delivery", data)
 			}
 		case "1-0:2.8.1":
 			data, unit := sm.getValueAndUnit(data)
@@ -132,7 +132,7 @@ func (sm *SmartMeter) parsePacket(datagram [][]byte) (*P1Packet, error) {
 			}
 			p.Electricity.Tariffs[0].Produced, err = strconv.ParseFloat(data, 64)
 			if err != nil {
-				return nil, fmt.Errorf("failed to parse %v as electricity delivery: %v", data, err)
+				return nil, WrapError(err, "electricity delivery", data)
 			}
 		case "1-0:2.8.2":
 			data, unit := sm.getValueAndUnit(data)
@@ -141,7 +141,7 @@ func (sm *SmartMeter) parsePacket(datagram [][]byte) (*P1Packet, error) {
 			}
 			p.Electricity.Tariffs[1].Produced, err = strconv.ParseFloat(data, 64)
 			if err != nil {
-				return nil, fmt.Errorf("failed to parse %v as electricity delivery: %v", data, err)
+				return nil, WrapError(err, "electricity delivery", data)
 			}
 		case "1-0:1.7.0":
 			data, unit := sm.getValueAndUnit(data)
@@ -150,7 +150,7 @@ func (sm *SmartMeter) parsePacket(datagram [][]byte) (*P1Packet, error) {
 			}
 			p.Electricity.CurrentConsumed, err = strconv.ParseFloat(data, 64)
 			if err != nil {
-				return nil, fmt.Errorf("failed to parse %v as electricity usage: %v", data, err)
+				return nil, WrapError(err, "electricity usage", data)
 			}
 		case "1-0:2.7.0":
 			data, unit := sm.getValueAndUnit(data)
@@ -159,47 +159,47 @@ func (sm *SmartMeter) parsePacket(datagram [][]byte) (*P1Packet, error) {
 			}
 			p.Electricity.CurrentProduced, err = strconv.ParseFloat(data, 64)
 			if err != nil {
-				return nil, fmt.Errorf("failed to parse %v as electricity usage: %v", data, err)
+				return nil, WrapError(err, "electricity usage", data)
 			}
 		case "0-0:96.7.21":
 			p.Electricity.NumberOfPowerFailures, err = strconv.Atoi(data)
 			if err != nil {
-				return nil, fmt.Errorf("failed to parse %v as number of power failures: %v", data, err)
+				return nil, WrapError(err, "number of power failures", data)
 			}
 		case "0-0:96.7.9":
 			p.Electricity.NumberOfLongPowerFailures, err = strconv.Atoi(data)
 			if err != nil {
-				return nil, fmt.Errorf("failed to parse %v as number of long power failures: %v", data, err)
+				return nil, WrapError(err, "number of long power failures", data)
 			}
 		case "1-0:32.32.0":
 			p.Electricity.Phases[0].NumberOfVoltageSags, err = strconv.Atoi(data)
 			if err != nil {
-				return nil, fmt.Errorf("failed to parse %v as number of voltage sags in phase L1: %v", data, err)
+				return nil, WrapError(err, "number of power voltage sags in phase L1", data)
 			}
 		case "1-0:52.32.0":
 			p.Electricity.Phases[1].NumberOfVoltageSags, err = strconv.Atoi(data)
 			if err != nil {
-				return nil, fmt.Errorf("failed to parse %v as number of voltage sags in phase L2: %v", data, err)
+				return nil, WrapError(err, "number of power voltage sags in phase L2", data)
 			}
 		case "1-0:72.32.0":
 			p.Electricity.Phases[2].NumberOfVoltageSags, err = strconv.Atoi(data)
 			if err != nil {
-				return nil, fmt.Errorf("failed to parse %v as number of voltage sags in phase L3: %v", data, err)
+				return nil, WrapError(err, "number of power voltage sags in phase L3", data)
 			}
 		case "1-0:32.36.0":
 			p.Electricity.Phases[0].NumberOfVoltageSwells, err = strconv.Atoi(data)
 			if err != nil {
-				return nil, fmt.Errorf("failed to parse %v as number of voltage swells in phase L1: %v", data, err)
+				return nil, WrapError(err, "number of power voltage swells in phase L1", data)
 			}
 		case "1-0:52.36.0":
 			p.Electricity.Phases[1].NumberOfVoltageSwells, err = strconv.Atoi(data)
 			if err != nil {
-				return nil, fmt.Errorf("failed to parse %v as number of voltage swells in phase L2: %v", data, err)
+				return nil, WrapError(err, "number of power voltage swells in phase L2", data)
 			}
 		case "1-0:72.36.0":
 			p.Electricity.Phases[2].NumberOfVoltageSwells, err = strconv.Atoi(data)
 			if err != nil {
-				return nil, fmt.Errorf("failed to parse %v as number of voltage swells in phase L3: %v", data, err)
+				return nil, WrapError(err, "number of power voltage swells in phase L3", data)
 			}
 		case "1-0:32.7.0":
 			data, unit := sm.getValueAndUnit(data)
@@ -208,7 +208,7 @@ func (sm *SmartMeter) parsePacket(datagram [][]byte) (*P1Packet, error) {
 			}
 			p.Electricity.Phases[0].InstantaneousVoltage, err = strconv.ParseFloat(data, 64)
 			if err != nil {
-				return nil, fmt.Errorf("failed to parse %v as instantaneous voltage in phase L1: %v", data, err)
+				return nil, WrapError(err, "instantaneous voltage in phase L1", data)
 			}
 		case "1-0:52.7.0":
 			data, unit := sm.getValueAndUnit(data)
@@ -217,7 +217,7 @@ func (sm *SmartMeter) parsePacket(datagram [][]byte) (*P1Packet, error) {
 			}
 			p.Electricity.Phases[1].InstantaneousVoltage, err = strconv.ParseFloat(data, 64)
 			if err != nil {
-				return nil, fmt.Errorf("failed to parse %v as instantaneous voltage in phase L2: %v", data, err)
+				return nil, WrapError(err, "instantaneous voltage in phase L2", data)
 			}
 		case "1-0:72.7.0":
 			data, unit := sm.getValueAndUnit(data)
@@ -226,7 +226,7 @@ func (sm *SmartMeter) parsePacket(datagram [][]byte) (*P1Packet, error) {
 			}
 			p.Electricity.Phases[2].InstantaneousVoltage, err = strconv.ParseFloat(data, 64)
 			if err != nil {
-				return nil, fmt.Errorf("failed to parse %v as instantaneous voltage in phase L3: %v", data, err)
+				return nil, WrapError(err, "instantaneous voltage in phase L3", data)
 			}
 		case "1-0:31.7.0":
 			data, unit := sm.getValueAndUnit(data)
@@ -235,7 +235,7 @@ func (sm *SmartMeter) parsePacket(datagram [][]byte) (*P1Packet, error) {
 			}
 			p.Electricity.Phases[0].InstantaneousCurrent, err = strconv.ParseFloat(data, 64)
 			if err != nil {
-				return nil, fmt.Errorf("failed to parse %v as instantaneous current in phase L1: %v", data, err)
+				return nil, WrapError(err, "instantaneous current in phase L1", data)
 			}
 		case "1-0:51.7.0":
 			data, unit := sm.getValueAndUnit(data)
@@ -244,7 +244,7 @@ func (sm *SmartMeter) parsePacket(datagram [][]byte) (*P1Packet, error) {
 			}
 			p.Electricity.Phases[1].InstantaneousCurrent, err = strconv.ParseFloat(data, 64)
 			if err != nil {
-				return nil, fmt.Errorf("failed to parse %v as instantaneous current in phase L2: %v", data, err)
+				return nil, WrapError(err, "instantaneous current in phase L2", data)
 			}
 		case "1-0:71.7.0":
 			data, unit := sm.getValueAndUnit(data)
@@ -253,7 +253,7 @@ func (sm *SmartMeter) parsePacket(datagram [][]byte) (*P1Packet, error) {
 			}
 			p.Electricity.Phases[2].InstantaneousCurrent, err = strconv.ParseFloat(data, 64)
 			if err != nil {
-				return nil, fmt.Errorf("failed to parse %v as instantaneous current in phase L3: %v", data, err)
+				return nil, WrapError(err, "instantaneous current in phase L3", data)
 			}
 		case "1-0:21.7.0":
 			data, unit := sm.getValueAndUnit(data)
@@ -262,7 +262,7 @@ func (sm *SmartMeter) parsePacket(datagram [][]byte) (*P1Packet, error) {
 			}
 			p.Electricity.Phases[0].InstantaneousActivePositivePower, err = strconv.ParseFloat(data, 64)
 			if err != nil {
-				return nil, fmt.Errorf("failed to parse %v as instantaneous active power P+ in phase L1: %v", data, err)
+				return nil, WrapError(err, "instantaneous active power P+ in phase L1", data)
 			}
 		case "1-0:41.7.0":
 			data, unit := sm.getValueAndUnit(data)
@@ -271,7 +271,7 @@ func (sm *SmartMeter) parsePacket(datagram [][]byte) (*P1Packet, error) {
 			}
 			p.Electricity.Phases[1].InstantaneousActivePositivePower, err = strconv.ParseFloat(data, 64)
 			if err != nil {
-				return nil, fmt.Errorf("failed to parse %v as instantaneous active power P+ in phase L2: %v", data, err)
+				return nil, WrapError(err, "instantaneous active power P+ in phase L2", data)
 			}
 		case "1-0:61.7.0":
 			data, unit := sm.getValueAndUnit(data)
@@ -280,7 +280,7 @@ func (sm *SmartMeter) parsePacket(datagram [][]byte) (*P1Packet, error) {
 			}
 			p.Electricity.Phases[2].InstantaneousActivePositivePower, err = strconv.ParseFloat(data, 64)
 			if err != nil {
-				return nil, fmt.Errorf("failed to parse %v as instantaneous active power P+ in phase L3: %v", data, err)
+				return nil, WrapError(err, "instantaneous active power P+ in phase L3", data)
 			}
 		case "1-0:22.7.0":
 			data, unit := sm.getValueAndUnit(data)
@@ -289,7 +289,7 @@ func (sm *SmartMeter) parsePacket(datagram [][]byte) (*P1Packet, error) {
 			}
 			p.Electricity.Phases[0].InstantaneousActiveNegativePower, err = strconv.ParseFloat(data, 64)
 			if err != nil {
-				return nil, fmt.Errorf("failed to parse %v as instantaneous active power P- in phase L1: %v", data, err)
+				return nil, WrapError(err, "instantaneous active power P- in phase L1", data)
 			}
 		case "1-0:42.7.0":
 			data, unit := sm.getValueAndUnit(data)
@@ -298,12 +298,21 @@ func (sm *SmartMeter) parsePacket(datagram [][]byte) (*P1Packet, error) {
 			}
 			p.Electricity.Phases[1].InstantaneousActiveNegativePower, err = strconv.ParseFloat(data, 64)
 			if err != nil {
-				return nil, fmt.Errorf("failed to parse %v as instantaneous active power P- in phase L2: %v", data, err)
+				return nil, WrapError(err, "instantaneous active power P- in phase L2", data)
+			}
+		case "1-0:62.7.0":
+			data, unit := sm.getValueAndUnit(data)
+			if unit != "kW" {
+				return nil, fmt.Errorf("invalid unit for instantaneous active power P- in phase L3: %v", unit)
+			}
+			p.Electricity.Phases[2].InstantaneousActiveNegativePower, err = strconv.ParseFloat(data, 64)
+			if err != nil {
+				return nil, WrapError(err, "instantaneous active power P- in phase L3", data)
 			}
 		case "1-0:99.97.0":
 			numberOfPowerFailures, err := strconv.Atoi(data)
 			if err != nil {
-				return nil, fmt.Errorf("failed to parse %v as number of power failures: %v", data, err)
+				return nil, WrapError(err, "number of power failures", data)
 			}
 
 			index := dataEnd + 1
@@ -317,7 +326,7 @@ func (sm *SmartMeter) parsePacket(datagram [][]byte) (*P1Packet, error) {
 			data := string(lineData[nextDataStart+1 : nextDataEnd])
 
 			if data != "0-0:96.7.19" {
-				return nil, fmt.Errorf("invalid power failure event log data format %v", data)
+				return nil, WrapError(fmt.Errorf("invalid data format"), "power failure event log", data)
 			}
 
 			for i := 0; i < numberOfPowerFailures; i++ {
@@ -336,7 +345,7 @@ func (sm *SmartMeter) parsePacket(datagram [][]byte) (*P1Packet, error) {
 
 				item.Timestamp, err = time.ParseInLocation(dateFormat, data[:len(data)-1], time.Local)
 				if err != nil {
-					return nil, fmt.Errorf("failed to parse %v as power failure timestamp: %v", data, err)
+					return nil, WrapError(err, "power failure timestamp", data)
 				}
 
 				index = nextDataEnd + 1
@@ -357,63 +366,54 @@ func (sm *SmartMeter) parsePacket(datagram [][]byte) (*P1Packet, error) {
 
 				duration, err := strconv.Atoi(data)
 				if err != nil {
-					return nil, fmt.Errorf("failed to parse %v as power failure duration: %v", data, err)
+					return nil, WrapError(err, "power failure duration", data)
 				}
 
 				item.Duration = time.Duration(duration) * time.Second
 
 				p.Electricity.PowerFailureEventLog = append(p.Electricity.PowerFailureEventLog, item)
 			}
-		case "1-0:62.7.0":
-			data, unit := sm.getValueAndUnit(data)
-			if unit != "kW" {
-				return nil, fmt.Errorf("invalid unit for instantaneous active power P- in phase L3: %v", unit)
-			}
-			p.Electricity.Phases[2].InstantaneousActiveNegativePower, err = strconv.ParseFloat(data, 64)
-			if err != nil {
-				return nil, fmt.Errorf("failed to parse %v as instantaneous active power P- in phase L3: %v", data, err)
-			}
 		case "0-1:96.1.0":
 			p.Gas.EquipmentID = data
 		case "0-1:24.1.0":
 			p.Gas.DeviceType, err = strconv.Atoi(data)
 			if err != nil {
-				return nil, fmt.Errorf("failed to parse %v as device type: %v", data, err)
+				return nil, WrapError(err, "device type", data)
 			}
 		case "0-1:24.4.0":
 			p.Gas.ValvePosition, err = strconv.Atoi(data)
 			if err != nil {
-				return nil, fmt.Errorf("failed to parse %v as valve position: %v", data, err)
+				return nil, WrapError(err, "valve position", data)
 			}
 		case "0-1:24.2.1":
 			result := newGasFormat.FindStringSubmatch(string(line))
 			if result == nil {
-				return nil, fmt.Errorf("failed to parse %v as gas format", string(line))
+				return nil, WrapError(fmt.Errorf("no regex match"), "gas format", string(line))
 			}
 			p.Gas.Consumed, err = strconv.ParseFloat(result[3], 64)
 			if err != nil {
-				return nil, fmt.Errorf("failed to parse %v as gas consumption: %v", result[3], err)
+				return nil, WrapError(err, "gas consumption", result[3])
 			}
 			p.Gas.MeasuredAt, err = time.Parse(dateFormat, result[1])
 			if err != nil {
-				return nil, fmt.Errorf("failed to parse %v as gas measurement time: %v", result[1], err)
+				return nil, WrapError(err, "gas measurement time", result[1])
 			}
 		case "0-1:24.3.0":
 			result := oldGasFormatNextLine.FindStringSubmatch(string(datagram[i+1]))
 			if result == nil {
-				return nil, fmt.Errorf("failed to parse %v as gas format", string(line))
+				return nil, WrapError(fmt.Errorf("no regex match"), "gas format", string(line))
 			}
 			p.Gas.Consumed, err = strconv.ParseFloat(result[1], 64)
 			if err != nil {
-				return nil, fmt.Errorf("failed to parse %v as gas consumption: %v", result[1], err)
+				return nil, WrapError(err, "gas consumption", result[3])
 			}
 			result = oldGasFormat.FindStringSubmatch(string(line))
 			if result == nil {
-				return nil, fmt.Errorf("failed to parse %v as gas format", string(line))
+				return nil, WrapError(fmt.Errorf("no regex match"), "gas format", string(line))
 			}
 			p.Gas.MeasuredAt, err = time.Parse(dateFormat, result[1])
 			if err != nil {
-				return nil, fmt.Errorf("failed to parse %v as gas measurement time: %v", result[1], err)
+				return nil, WrapError(err, "gas measurement time", result[1])
 			}
 		case "0-0:96.13.1":
 			p.Message.Code = data

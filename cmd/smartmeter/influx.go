@@ -69,7 +69,10 @@ var influxCmd = &cobra.Command{
 		for {
 			packet, err := sm.Read()
 			if err != nil {
-				return fmt.Errorf("failed to read packet: %v", err)
+				if _, ok := err.(*smartmeter.ParseError); !ok {
+					return fmt.Errorf("failed to read packet: %v", err)
+				}
+				log.Println(err)
 			}
 
 			if jsonOuput {
