@@ -73,6 +73,7 @@ var influxCmd = &cobra.Command{
 					return fmt.Errorf("failed to read packet: %v", err)
 				}
 				log.Println(err)
+				continue
 			}
 
 			if jsonOuput {
