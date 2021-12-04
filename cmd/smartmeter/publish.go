@@ -6,6 +6,7 @@ import (
 	"github.com/koesie10/smartmeter/debugjson"
 	"github.com/koesie10/smartmeter/influx"
 	"github.com/koesie10/smartmeter/prometheus"
+	"github.com/koesie10/smartmeter/serialinput"
 	"github.com/koesie10/smartmeter/smartmeter"
 	"github.com/spf13/cobra"
 	"log"
@@ -90,7 +91,7 @@ func runPublish() error {
 		publishers = append(publishers, publisher)
 	}
 
-	port, err := OpenPort()
+	port, err := serialinput.Open(&config.Options)
 	if err != nil {
 		return fmt.Errorf("failed to open port: %v", err)
 	}

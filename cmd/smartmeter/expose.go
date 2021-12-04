@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/koesie10/smartmeter/serialinput"
 	"github.com/spf13/cobra"
 	"log"
 	"net"
@@ -17,7 +18,7 @@ var exposeCmd = &cobra.Command{
 	Use:   "expose",
 	Short: "send all raw datagram packets over a TCP server",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		port, err := OpenPort()
+		port, err := serialinput.Open(&config.Options)
 		if err != nil {
 			return fmt.Errorf("failed to open port: %v", err)
 		}
@@ -46,7 +47,7 @@ var exposeCmd = &cobra.Command{
 			}
 		}()
 
-		buf := make([]byte, 32 * 1024)
+		buf := make([]byte, 32*1024)
 		for {
 			nr, err := port.Read(buf)
 			if nr > 0 {

@@ -381,6 +381,8 @@ github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI
 github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
 github.com/koesie10/pflagenv v0.1.0 h1:zpl7gQGag5p6OHJ1A+gJfN8wtZw9E7YwJMfGaS4fLq0=
 github.com/koesie10/pflagenv v0.1.0/go.mod h1:p6rOqBqmTVp6Zgz/o/j4HOwdREEoF6SBDhCKlBfswm8=
+github.com/koesie10/pflagenv v0.1.1 h1:CQsf2+FTdf/6nLgiNZAdFt7oD1nvLF9UPDtiljQ9YC8=
+github.com/koesie10/pflagenv v0.1.1/go.mod h1:p6rOqBqmTVp6Zgz/o/j4HOwdREEoF6SBDhCKlBfswm8=
 github.com/konsorten/go-windows-terminal-sequences v1.0.1/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
 github.com/konsorten/go-windows-terminal-sequences v1.0.3/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
 github.com/kr/fs v0.1.0/go.mod h1:FFnZGqtBN9Gxj7eW1uZ42v5BccTP0vu6NEaFoC2HwRg=

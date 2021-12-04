@@ -3,7 +3,6 @@ module github.com/koesie10/smartmeter
 go 1.17
 
 require (
-	github.com/influxdata/influxdb v1.7.3
 	github.com/jacobsa/go-serial v0.0.0-20180131005756-15cf729a72d4
 	github.com/prometheus/client_golang v1.11.0
 	github.com/spf13/cobra v0.0.3
@@ -21,7 +20,7 @@ require (
 	github.com/influxdata/influxdb-client-go/v2 v2.6.0 // indirect
 	github.com/influxdata/line-protocol v0.0.0-20210922203350-b1ad95c89adf // indirect
 	github.com/influxdata/platform v0.0.0-20190117200541-d500d3cf5589 // indirect
-	github.com/koesie10/pflagenv v0.1.0 // indirect
+	github.com/koesie10/pflagenv v0.1.1 // indirect
 	github.com/magiconair/properties v1.8.5 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
 	github.com/mitchellh/mapstructure v1.4.3 // indirect

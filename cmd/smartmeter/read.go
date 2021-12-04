@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/koesie10/smartmeter/serialinput"
 	"os"
 	"text/tabwriter"
 	"time"
@@ -14,7 +15,7 @@ var readCmd = &cobra.Command{
 	Use:   "read",
 	Short: "read a single P1 packet to stdout",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		port, err := OpenPort()
+		port, err := serialinput.Open(&config.Options)
 		if err != nil {
 			return fmt.Errorf("failed to open port: %v", err)
 		}
