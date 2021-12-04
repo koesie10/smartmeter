@@ -28,8 +28,6 @@ var networkOptions = struct {
 	Address string
 }{}
 
-var jsonOuput bool
-
 var rootCmd = &cobra.Command{
 	Use: "smartmeter",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
@@ -52,8 +50,6 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVar(&networkOptions.Network, "network-type", "tcp", "network type")
 	rootCmd.PersistentFlags().StringVar(&networkOptions.Address, "network-address", "127.0.0.1:8888", "network address")
-
-	rootCmd.PersistentFlags().BoolVar(&jsonOuput, "json", false, "output as JSON")
 }
 
 func OpenPort() (io.ReadCloser, error) {
@@ -73,7 +69,7 @@ func OpenPort() (io.ReadCloser, error) {
 
 		return file, nil
 	case Network:
-		conn, err := net.DialTimeout(networkOptions.Network, networkOptions.Address, 10 * time.Second)
+		conn, err := net.DialTimeout(networkOptions.Network, networkOptions.Address, 10*time.Second)
 		if err != nil {
 			return nil, fmt.Errorf("failed to dial to network %s %s: %v", networkOptions.Network, networkOptions.Address, err)
 		}

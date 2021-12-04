@@ -1,9 +1,9 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/koesie10/pflagenv"
+	"github.com/koesie10/smartmeter/debugjson"
 	"github.com/koesie10/smartmeter/influx"
 	"github.com/koesie10/smartmeter/prometheus"
 	"github.com/koesie10/smartmeter/smartmeter"
@@ -50,8 +50,30 @@ var publishCmd = &cobra.Command{
 func runPublish() error {
 	var publishers []smartmeter.Publisher
 
+	if publishConfig.EnableJSONDebug {
+		publisher, err := debugjson.NewPublisher()
+		if err != nil {
+			return fmt.Errorf("failed to create JSON debug publisher: %w", err)
+		}
+		defer publisher.Close()
+		publishers = append(publishers, publisher)
+	}
+
 	if publishConfig.Influx.Addr != "" {
 		publisher, err := influx.NewPublisher(publishConfig.Influx)
+		if err != nil {
+			return fmt.Errorf("failed to create InfluxDB publisher: %w", err)
+		}
+		defer publisher.Close()
+		publishers = append(publishers, publisher)
+	}
+
+	if publishConfig.EnableInfluxDebug {
+		publisher, err := influx.NewDebugPublisher(influx.DebugPublisherOptions{
+			ElectricityMeasurementName: "smartmeter_electricity",
+			PhaseMeasurementName:       "smartmeter_phase",
+			GasMeasurementName:         "smartmeter_gas",
+		})
 		if err != nil {
 			return fmt.Errorf("failed to create InfluxDB publisher: %w", err)
 		}
@@ -87,15 +109,6 @@ func runPublish() error {
 			}
 			log.Println(err)
 			continue
-		}
-
-		if jsonOuput {
-			data, err := json.Marshal(packet)
-			if err != nil {
-				return fmt.Errorf("failed to output JSON: %v", err)
-			}
-
-			fmt.Println(string(data))
 		}
 
 		for _, publisher := range publishers {

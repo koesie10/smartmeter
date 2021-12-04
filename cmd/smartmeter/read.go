@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"text/tabwriter"
@@ -31,19 +30,9 @@ var readCmd = &cobra.Command{
 			return fmt.Errorf("failed to read packet: %v", err)
 		}
 
-		if jsonOuput {
-			data, err := json.Marshal(packet)
-			if err != nil {
-				return fmt.Errorf("failed to output JSON: %v", err)
-			}
-
-			fmt.Println(string(data))
-			return nil
-		}
-
 		tw := tabwriter.NewWriter(os.Stdout, 10, 0, 2, ' ', tabwriter.AlignRight)
 		fmt.Fprintln(tw, "Time\tTotal kWh Tariff 1 Consumed\tTotal kWh Tariff 2 consumed\tTotal gas consumed m^3\tCurrent consumption kW\tGas Measured At")
-		fmt.Fprintf(tw, "%s\t%.3f\t%.3f\t%.3f\t%.3f\t%s", time.Now(), packet.Electricity.Tariffs[0].Consumed, packet.Electricity.Tariffs[1].Consumed, packet.Gas.Consumed, packet.Electricity.CurrentConsumed - packet.Electricity.CurrentProduced, packet.Gas.MeasuredAt)
+		fmt.Fprintf(tw, "%s\t%.3f\t%.3f\t%.3f\t%.3f\t%s", time.Now(), packet.Electricity.Tariffs[0].Consumed, packet.Electricity.Tariffs[1].Consumed, packet.Gas.Consumed, packet.Electricity.CurrentConsumed-packet.Electricity.CurrentProduced, packet.Gas.MeasuredAt)
 		return tw.Flush()
 	},
 }
