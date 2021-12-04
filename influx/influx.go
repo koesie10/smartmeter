@@ -1,14 +1,15 @@
 package influx
 
 import (
+	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
+	"github.com/influxdata/influxdb-client-go/v2/api/write"
 	"strconv"
 	"time"
 
-	"github.com/influxdata/influxdb/client/v2"
 	"github.com/koesie10/smartmeter/smartmeter"
 )
 
-func NewElectricityPoint(t time.Time, p *smartmeter.P1Packet, measurement string, tags map[string]string) (*client.Point, error) {
+func NewElectricityPoint(t time.Time, p *smartmeter.P1Packet, measurementName string, tags map[string]string) (*write.Point, error) {
 	tags = copyTags(tags)
 	tags["equipment_id"] = p.Electricity.EquipmentID
 	tags["tariff"] = strconv.Itoa(p.Electricity.Tariff)
@@ -28,17 +29,17 @@ func NewElectricityPoint(t time.Time, p *smartmeter.P1Packet, measurement string
 	fields["number_of_power_failures"] = p.Electricity.NumberOfPowerFailures
 	fields["number_of_long_power_failures"] = p.Electricity.NumberOfLongPowerFailures
 
-	return client.NewPoint(measurement, tags, fields, t)
+	return influxdb2.NewPoint(measurementName, tags, fields, t), nil
 }
 
-func NewPhasePoint(t time.Time, p *smartmeter.P1Packet, phase int, measurement string, tags map[string]string) (*client.Point, error) {
+func NewPhasePoint(t time.Time, p *smartmeter.P1Packet, phase int, measurementName string, tags map[string]string) (*write.Point, error) {
 	tags = copyTags(tags)
 	tags["equipment_id"] = p.Electricity.EquipmentID
 	tags["tariff"] = strconv.Itoa(p.Electricity.Tariff)
 	tags["switch_position"] = strconv.Itoa(p.Electricity.SwitchPosition)
 	// Our phases are 0-indexed in the slice, while they are named in a 1-index fashion.
 	// We will use the 1-indexed tags
-	tags["phase"] = strconv.Itoa(phase+1)
+	tags["phase"] = strconv.Itoa(phase + 1)
 
 	pp := p.Electricity.Phases[phase]
 
@@ -51,10 +52,10 @@ func NewPhasePoint(t time.Time, p *smartmeter.P1Packet, phase int, measurement s
 	fields["instantaneous_active_positive_power"] = pp.InstantaneousActivePositivePower
 	fields["instantaneous_active_negative_power"] = pp.InstantaneousActiveNegativePower
 
-	return client.NewPoint(measurement, tags, fields, t)
+	return influxdb2.NewPoint(measurementName, tags, fields, t), nil
 }
 
-func NewGasPoint(p *smartmeter.P1Packet, measurement string, tags map[string]string) (*client.Point, error) {
+func NewGasPoint(p *smartmeter.P1Packet, measurementName string, tags map[string]string) (*write.Point, error) {
 	tags = copyTags(tags)
 	tags["equipment_id"] = p.Gas.EquipmentID
 	tags["device_type"] = strconv.Itoa(p.Gas.DeviceType)
@@ -63,7 +64,7 @@ func NewGasPoint(p *smartmeter.P1Packet, measurement string, tags map[string]str
 	fields := make(map[string]interface{})
 	fields["consumed"] = p.Gas.Consumed
 
-	return client.NewPoint(measurement, tags, fields, p.Gas.MeasuredAt)
+	return influxdb2.NewPoint(measurementName, tags, fields, p.Gas.MeasuredAt), nil
 }
 
 func copyTags(tags map[string]string) map[string]string {
