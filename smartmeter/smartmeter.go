@@ -431,5 +431,5 @@ func (sm *SmartMeter) getValueAndUnit(data string) (string, string) {
 		return data, ""
 	}
 
-	return data[:index], data [index+1:]
+	return data[:index], data[index+1:]
 }

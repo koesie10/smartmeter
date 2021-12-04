@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 	"log"
+	"time"
 )
 
 var config = struct {
@@ -25,6 +26,8 @@ var config = struct {
 
 		File: &serialinput.FileOptions{
 			Filename: "smartmeter/test/esmr50.txt",
+
+			RepeatDelay: 1 * time.Second,
 		},
 
 		Network: &serialinput.NetworkOptions{
