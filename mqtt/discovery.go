@@ -1,4 +1,4 @@
-package homeassistant
+package mqtt
 
 import (
 	"encoding/json"

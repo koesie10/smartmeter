@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/koesie10/pflagenv"
 	"github.com/koesie10/smartmeter/debugjson"
-	"github.com/koesie10/smartmeter/homeassistant"
 	"github.com/koesie10/smartmeter/influx"
+	"github.com/koesie10/smartmeter/mqtt"
 	"github.com/koesie10/smartmeter/prometheus"
 	"github.com/koesie10/smartmeter/serialinput"
 	"github.com/koesie10/smartmeter/smartmeter"
@@ -15,17 +15,17 @@ import (
 )
 
 var publishConfig = struct {
-	HomeAssistant homeassistant.PublisherOptions `env:",squash"`
-	Influx        influx.PublisherOptions        `env:",squash"`
-	Prometheus    prometheus.PublisherOptions    `env:",squash"`
+	MQTT       mqtt.PublisherOptions       `env:",squash"`
+	Influx     influx.PublisherOptions     `env:",squash"`
+	Prometheus prometheus.PublisherOptions `env:",squash"`
 
 	EnableJSONDebug   bool `env:"ENABLE_JSON_DEBUG" flag:"enable-json-debug" desc:"enable json debug output"`
 	EnableInfluxDebug bool `env:"ENABLE_INFLUX_DEBUG" flag:"enable-influx-debug" desc:"enable influx debug output"`
 }{
-	HomeAssistant: homeassistant.PublisherOptions{
+	MQTT: mqtt.PublisherOptions{
 		Brokers: []string{"tcp://127.0.0.1:1883"},
 		Topic:   "homeassistant/sensor/sensorSmartmeter/state",
-		HomeAssistant: homeassistant.HomeAssistantOptions{
+		HomeAssistant: mqtt.HomeAssistantOptions{
 			DiscoveryEnabled:  true,
 			DiscoveryInterval: 30 * time.Second,
 			DiscoveryQoS:      1, // At least once
@@ -114,15 +114,15 @@ func runPublish() error {
 		logger.Info("Prometheus publisher enabled")
 	}
 
-	if len(publishConfig.HomeAssistant.Brokers) > 0 {
-		publisher, err := homeassistant.NewPublisher(publishConfig.HomeAssistant, logger)
+	if len(publishConfig.MQTT.Brokers) > 0 {
+		publisher, err := mqtt.NewPublisher(publishConfig.MQTT, logger)
 		if err != nil {
-			return fmt.Errorf("failed to create HomeAssistant publisher: %w", err)
+			return fmt.Errorf("failed to create MQTT publisher: %w", err)
 		}
 		defer publisher.Close()
 		publishers = append(publishers, publisher)
 
-		logger.Info("HomeAssistant publisher enabled")
+		logger.Info("MQTT publisher enabled")
 	}
 
 	port, err := serialinput.Open(&config.Options)
