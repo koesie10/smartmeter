@@ -42,7 +42,7 @@ func (p *publisher) publishDiscovery() error {
 		Name:              "Energy Consumption (tariff 1)",
 		StateTopic:        p.options.Topic,
 		StateClass:        "total_increasing",
-		UnitOfMeasurement: "UnitOfMeasurement",
+		UnitOfMeasurement: "kWh",
 		ValueTemplate:     "{{ value_json.Tariffs[0].Consumed }}",
 
 		UniqueID: fmt.Sprintf("%s%s", p.options.HomeAssistant.UniqueIDPrefix, "tarrif1_consumed"),
