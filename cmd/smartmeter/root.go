@@ -5,6 +5,7 @@ import (
 	"github.com/koesie10/pflagenv"
 	"github.com/koesie10/smartmeter/serialinput"
 	"github.com/spf13/cobra"
+	"go.uber.org/zap"
 	"log"
 )
 
@@ -32,6 +33,8 @@ var config = struct {
 		},
 	},
 }
+
+var logger, _ = zap.NewDevelopment()
 
 var rootCmd = &cobra.Command{
 	Use: "smartmeter",
