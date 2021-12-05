@@ -8,10 +8,7 @@ Licensed under MIT license.
 
 ## Development
 
-* [dep](https://github.com/golang/dep)
-
 ```
-dep ensure
 go install github.com/koesie10/smartmeter/cmd/smartmeter
 ```
 
@@ -45,7 +42,7 @@ PermissionsStartOnly=true
 
 Restart=always
 
-ExecStart=/usr/local/bin/smartmeter influx --influx-database telegraf --influx-tags="house=myhouse"
+ExecStart=/usr/local/bin/smartmeter publish --influx-database telegraf --influx-tags="house=myhouse"
 
 [Install]
 WantedBy=multi-user.target
