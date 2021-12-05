@@ -18,10 +18,10 @@ var config = struct {
 
 		Serial: &serialinput.SerialOptions{
 			Port:       "/dev/ttyUSB0",
-			BaudRate:   9600,
-			DataBits:   7,
+			BaudRate:   115200,
+			DataBits:   8,
 			StopBits:   1,
-			ParityMode: serialinput.ParityMode(serial.PARITY_EVEN),
+			ParityMode: serialinput.ParityMode(serial.PARITY_NONE),
 		},
 
 		File: &serialinput.FileOptions{
