@@ -7,6 +7,11 @@ import (
 	"go.uber.org/zap"
 )
 
+type homeAssistantDiscovery struct {
+	p      *publisher
+	Device *homeAssistantDevice
+}
+
 type homeAssistantDevice struct {
 	Identifiers  []string `json:"identifiers,omitempty"`
 	Manufacturer string   `json:"manufacturer,omitempty"`
@@ -14,7 +19,9 @@ type homeAssistantDevice struct {
 	Name         string   `json:"name,omitempty"`
 }
 
-type homeAssistantConfig struct {
+type homeAssistantEntity struct {
+	InternalID string `json:"-"`
+
 	DeviceClass       string `json:"device_class,omitempty"`
 	Name              string `json:"name"`
 	StateTopic        string `json:"state_topic"`
@@ -22,8 +29,8 @@ type homeAssistantConfig struct {
 	UnitOfMeasurement string `json:"unit_of_measurement,omitempty"`
 	ValueTemplate     string `json:"value_template"`
 
-	UniqueID string              `json:"unique_id,omitempty"`
-	Device   homeAssistantDevice `json:"device"`
+	UniqueID string               `json:"unique_id,omitempty"`
+	Device   *homeAssistantDevice `json:"device"`
 }
 
 func (p *publisher) publishDiscovery() error {
@@ -31,39 +38,56 @@ func (p *publisher) publishDiscovery() error {
 		return nil
 	}
 
-	device := homeAssistantDevice{
-		Identifiers:  p.options.HomeAssistant.DeviceIdentifiers,
-		Manufacturer: p.options.HomeAssistant.DeviceManufacturer,
-		Model:        p.options.HomeAssistant.DeviceModel,
-		Name:         p.options.HomeAssistant.DeviceName,
+	discovery := homeAssistantDiscovery{
+		p: p,
+		Device: &homeAssistantDevice{
+			Identifiers:  p.options.HomeAssistant.DeviceIdentifiers,
+			Manufacturer: p.options.HomeAssistant.DeviceManufacturer,
+			Model:        p.options.HomeAssistant.DeviceModel,
+			Name:         p.options.HomeAssistant.DeviceName,
+		},
 	}
 
-	config := homeAssistantConfig{
-		DeviceClass:       "power",
-		Name:              "Energy Consumption (tariff 1)",
-		StateTopic:        p.options.Topic,
-		StateClass:        "total_increasing",
-		UnitOfMeasurement: "kWh",
-		ValueTemplate:     "{{ value_json.Electricity.Tariffs[0].Consumed }}",
-
-		UniqueID: fmt.Sprintf("%s%s", p.options.HomeAssistant.UniqueIDPrefix, "tarrif1_consumed"),
-		Device:   device,
+	entities := discovery.configureEntities()
+	for _, entity := range entities {
+		if err := discovery.publishEntity(entity); err != nil {
+			p.logger.With(zap.Error(err)).Warnf("Failed to publish entity %s", entity.InternalID)
+		}
 	}
 
-	topic := fmt.Sprintf("%s/sensor/%s%s/config", p.options.HomeAssistant.DiscoveryPrefix, p.options.HomeAssistant.DevicePrefix, "tarrif1_consumed")
+	return nil
+}
 
-	data, err := json.Marshal(config)
+func (d *homeAssistantDiscovery) publishEntity(entity *homeAssistantEntity) error {
+	topic := fmt.Sprintf(
+		"%s/sensor/%s%s/config",
+		d.p.options.HomeAssistant.DiscoveryPrefix,
+		d.p.options.HomeAssistant.DevicePrefix,
+		entity.InternalID,
+	)
+
+	data, err := json.Marshal(entity)
 	if err != nil {
 		return fmt.Errorf("failed to marshal config to JSON: %w", err)
 	}
 
-	token := p.client.Publish(topic, byte(p.options.HomeAssistant.DiscoveryQoS), true, string(data))
+	token := d.p.client.Publish(topic, byte(d.p.options.HomeAssistant.DiscoveryQoS), true, string(data))
 	go func(topic string) {
 		token.Wait()
 		if err := token.Error(); err != nil {
-			p.logger.With(zap.Error(err)).Warnf("Failed to publish config %s to MQTT", topic)
+			d.p.logger.With(zap.Error(err)).Warnf("Failed to publish config %s to MQTT", topic)
 		}
 	}(topic)
 
 	return nil
+}
+
+func (d *homeAssistantDiscovery) configureEntity(id string, config *homeAssistantEntity) *homeAssistantEntity {
+	config.InternalID = id
+
+	config.StateTopic = d.p.options.Topic
+	config.UniqueID = fmt.Sprintf("%s%s", d.p.options.HomeAssistant.UniqueIDPrefix, id)
+	config.Device = d.Device
+
+	return config
 }
