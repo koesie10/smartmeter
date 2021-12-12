@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"time"
+
 	"github.com/koesie10/pflagenv"
 	"github.com/koesie10/smartmeter/debugjson"
 	"github.com/koesie10/smartmeter/influx"
@@ -10,8 +13,6 @@ import (
 	"github.com/koesie10/smartmeter/serialinput"
 	"github.com/koesie10/smartmeter/smartmeter"
 	"github.com/spf13/cobra"
-	"log"
-	"time"
 )
 
 var publishConfig = struct {
@@ -30,7 +31,7 @@ var publishConfig = struct {
 			DiscoveryInterval: 30 * time.Second,
 			DiscoveryQoS:      1, // At least once
 			DiscoveryPrefix:   "homeassistant",
-			DevicePrefix:      "weatherstation_",
+			DevicePrefix:      "smartmeter_",
 		},
 	},
 
