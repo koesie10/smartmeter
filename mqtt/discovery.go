@@ -3,6 +3,7 @@ package mqtt
 import (
 	"encoding/json"
 	"fmt"
+
 	"go.uber.org/zap"
 )
 
@@ -43,7 +44,7 @@ func (p *publisher) publishDiscovery() error {
 		StateTopic:        p.options.Topic,
 		StateClass:        "total_increasing",
 		UnitOfMeasurement: "kWh",
-		ValueTemplate:     "{{ value_json.Tariffs[0].Consumed }}",
+		ValueTemplate:     "{{ value_json.Electricity.Tariffs[0].Consumed }}",
 
 		UniqueID: fmt.Sprintf("%s%s", p.options.HomeAssistant.UniqueIDPrefix, "tarrif1_consumed"),
 		Device:   device,
