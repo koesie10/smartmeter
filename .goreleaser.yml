@@ -10,6 +10,20 @@ builds:
       - linux
       - windows
       - darwin
+    goarch:
+      - arm
+      - arm64
+      - amd64
+    goarm:
+      - 6
+      - 7
+    ignore:
+      - goos: darwin
+        goarch: arm
+      - goos: windows
+        goarch: arm
+      - goos: windows
+        goarch: arm64
     main: ./cmd/smartmeter
 checksum:
   name_template: 'checksums.txt'
