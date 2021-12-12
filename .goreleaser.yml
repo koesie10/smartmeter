@@ -25,6 +25,11 @@ builds:
       - goos: windows
         goarch: arm64
     main: ./cmd/smartmeter
+    ldflags:
+      - -s -w
+      - -X github.com/koesie10/smartmeter/version.Version={{.Version}}
+      - -X github.com/koesie10/smartmeter/version.Commit={{.Commit}}
+      - -X github.com/koesie10/smartmeter/version.BuildDate={{.Date}}
 checksum:
   name_template: 'checksums.txt'
 snapshot:

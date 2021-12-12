@@ -5,12 +5,6 @@ import (
 	"os"
 )
 
-var (
-	version = "dev"
-	commit  = "none"
-	date    = "unknown"
-)
-
 func main() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)

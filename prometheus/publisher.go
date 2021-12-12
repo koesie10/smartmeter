@@ -2,13 +2,16 @@ package prometheus
 
 import (
 	"fmt"
-	"github.com/koesie10/smartmeter/smartmeter"
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"log"
 	"net"
 	"net/http"
 	"strconv"
+
+	"github.com/koesie10/smartmeter/smartmeter"
+	"github.com/koesie10/smartmeter/version"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/collectors"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 var _ smartmeter.Publisher = (*publisher)(nil)
@@ -146,6 +149,25 @@ func NewPublisher(options PublisherOptions) (smartmeter.Publisher, error) {
 
 	registry.MustRegister(p.gasConsumed)
 
+	if !options.DisableGoCollector {
+		registry.MustRegister(collectors.NewGoCollector())
+		registry.MustRegister(collectors.NewProcessCollector(collectors.ProcessCollectorOpts{}))
+	}
+
+	buildInfo := prometheus.NewGauge(prometheus.GaugeOpts{
+		Name:      "info",
+		Help:      "Information about the smartmeter build",
+		Namespace: "smartmeter",
+		ConstLabels: map[string]string{
+			"version":    version.Version,
+			"commit":     version.Commit,
+			"build_date": version.BuildDate,
+		},
+	})
+	buildInfo.Set(1)
+
+	registry.MustRegister(buildInfo)
+
 	mux := http.NewServeMux()
 	mux.Handle("/metrics", promhttp.HandlerFor(registry, promhttp.HandlerOpts{}))
 
@@ -170,6 +192,8 @@ func NewPublisher(options PublisherOptions) (smartmeter.Publisher, error) {
 
 type PublisherOptions struct {
 	Addr string `env:"PROMETHEUS_ADDR" flag:"addr" desc:"Prometheus HTTP server address, set empty to disable"`
+
+	DisableGoCollector bool `env:"DISABLE_GO_COLLECTOR" flag:"disable-go-collector" desc:"Disable Go collector"`
 }
 
 func (p *publisher) Publish(packet *smartmeter.P1Packet) error {

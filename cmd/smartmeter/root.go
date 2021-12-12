@@ -8,6 +8,7 @@ import (
 	"github.com/jacobsa/go-serial/serial"
 	"github.com/koesie10/pflagenv"
 	"github.com/koesie10/smartmeter/serialinput"
+	"github.com/koesie10/smartmeter/version"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 )
@@ -44,9 +45,9 @@ var logger, _ = zap.NewDevelopment()
 var rootCmd = &cobra.Command{
 	Use: "smartmeter",
 	Version: fmt.Sprintf("%s (%s at %s)",
-		version,
-		commit,
-		date,
+		version.Version,
+		version.Commit,
+		version.BuildDate,
 	),
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		if err := pflagenv.Parse(&config); err != nil {
