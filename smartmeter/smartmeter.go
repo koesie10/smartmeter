@@ -94,7 +94,7 @@ func (sm *SmartMeter) parsePacket(datagram [][]byte) (*P1Packet, error) {
 		case "0-0:96.14.0":
 			p.Electricity.Tariff, err = strconv.Atoi(data)
 			if err != nil {
-				return nil, WrapError(err, "tarrif", data)
+				return nil, WrapError(err, "tariff", data)
 			}
 		case "0-0:96.3.10":
 			p.Electricity.SwitchPosition, err = strconv.Atoi(data)

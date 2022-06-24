@@ -13,30 +13,30 @@ func (d *homeAssistantDiscovery) configureEntities() []*homeAssistantEntity {
 		}),
 	)
 
-	for tarrif := 0; tarrif < 2; tarrif++ {
+	for tariff := 0; tariff < 2; tariff++ {
 		result = append(
 			result,
-			d.configureEntity(fmt.Sprintf("tarrif%d_consumed", tarrif+1), &homeAssistantEntity{
+			d.configureEntity(fmt.Sprintf("tariff%d_consumed", tariff+1), &homeAssistantEntity{
 				DeviceClass:       "energy",
-				Name:              fmt.Sprintf("Energy Consumption (tariff %d)", tarrif+1),
+				Name:              fmt.Sprintf("Energy Consumption (tariff %d)", tariff+1),
 				StateClass:        "total",
 				UnitOfMeasurement: "kWh",
-				ValueTemplate:     fmt.Sprintf("{{ value_json.Electricity.Tariffs[%d].Consumed }}", tarrif),
+				ValueTemplate:     fmt.Sprintf("{{ value_json.Electricity.Tariffs[%d].Consumed }}", tariff),
 			}),
-			d.configureEntity(fmt.Sprintf("tarrif%d_produced", tarrif+1), &homeAssistantEntity{
+			d.configureEntity(fmt.Sprintf("tariff%d_produced", tariff+1), &homeAssistantEntity{
 				DeviceClass:       "energy",
-				Name:              fmt.Sprintf("Energy Production (tariff %d)", tarrif+1),
+				Name:              fmt.Sprintf("Energy Production (tariff %d)", tariff+1),
 				StateClass:        "total",
 				UnitOfMeasurement: "kWh",
-				ValueTemplate:     fmt.Sprintf("{{ value_json.Electricity.Tariffs[%d].Produced }}", tarrif),
+				ValueTemplate:     fmt.Sprintf("{{ value_json.Electricity.Tariffs[%d].Produced }}", tariff),
 			}),
 		)
 	}
 
 	result = append(result,
-		d.configureEntity("tarrif", &homeAssistantEntity{
-			Name:          "Energy Tarrif",
-			ValueTemplate: "{{ value_json.Electricity.Tarrif }}",
+		d.configureEntity("tariff", &homeAssistantEntity{
+			Name:          "Energy Tariff",
+			ValueTemplate: "{{ value_json.Electricity.Tariff }}",
 		}),
 
 		d.configureEntity("current_consumption", &homeAssistantEntity{
