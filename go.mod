@@ -9,7 +9,7 @@ require (
 	github.com/koesie10/pflagenv v0.1.1
 	github.com/prometheus/client_golang v1.11.0
 	github.com/spf13/cobra v0.0.3
-	go.uber.org/zap v1.19.1
+	go.uber.org/zap v1.24.0
 )
 
 require (
