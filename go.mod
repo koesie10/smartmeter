@@ -1,6 +1,6 @@
 module github.com/koesie10/smartmeter
 
-go 1.21
+go 1.22.3
 
 require (
 	github.com/eclipse/paho.mqtt.golang v1.4.3
