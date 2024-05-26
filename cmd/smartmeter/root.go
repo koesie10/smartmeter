@@ -14,7 +14,7 @@ import (
 )
 
 var config = struct {
-	serialinput.Options `env:",squish"`
+	serialinput.Options `env:",squash"`
 }{
 	Options: serialinput.Options{
 		InputType: serialinput.SerialPort,

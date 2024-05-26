@@ -9,11 +9,11 @@ import (
 type Options struct {
 	InputType InputType `env:"INPUT_TYPE" flag:"input-type" desc:"input type to read from"`
 
-	Serial *SerialOptions `env:",squish"`
+	Serial *SerialOptions `env:",squash"`
 
-	File *FileOptions `env:",squish"`
+	File *FileOptions `env:",squash"`
 
-	Network *NetworkOptions `env:",squish"`
+	Network *NetworkOptions `env:",squash"`
 }
 
 func Open(opts *Options) (io.ReadCloser, error) {
