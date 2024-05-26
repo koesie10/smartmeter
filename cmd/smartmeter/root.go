@@ -34,8 +34,10 @@ var config = struct {
 		},
 
 		Network: &serialinput.NetworkOptions{
-			Type:    "tcp",
-			Address: "127.0.0.1:8888",
+			Type:        "tcp",
+			Address:     "127.0.0.1:8888",
+			DialTimeout: 10 * time.Second,
+			ReadTimeout: 10 * time.Second,
 		},
 	},
 }
