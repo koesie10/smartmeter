@@ -75,7 +75,7 @@ func (sm *SmartMeter) parsePacket(datagram [][]byte) (*P1Packet, error) {
 	for i, line := range datagram {
 		dataStart := bytes.IndexRune(line, '(')
 		dataEnd := bytes.IndexRune(line, ')')
-		if dataStart < 0 || dataEnd < 0 {
+		if dataStart < 0 || dataEnd < 0 || dataEnd <= dataStart {
 			continue
 		}
 		identifier := string(line[:dataStart])
