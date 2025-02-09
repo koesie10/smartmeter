@@ -4,7 +4,7 @@ go 1.22.3
 
 require (
 	github.com/eclipse/paho.mqtt.golang v1.4.3
-	github.com/influxdata/influxdb-client-go/v2 v2.13.0
+	github.com/influxdata/influxdb-client-go/v2 v2.14.0
 	github.com/jacobsa/go-serial v0.0.0-20180131005756-15cf729a72d4
 	github.com/koesie10/pflagenv v0.1.1
 	github.com/prometheus/client_golang v1.19.1
